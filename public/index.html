@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dott Grid</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(100, 7px);
+            grid-template-rows: repeat(100, 7px);
+            gap: 1px;
+        }
+        .cell {
+            width: 7px;
+            height: 7px;
+            background-color: white;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        #colorPickerContainer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="colorPickerContainer">
+        <label for="colorPicker">Выберите цвет: </label>
+        <input type="color" id="colorPicker" value="#000000">
+    </div>
+    <div id="grid"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const grid = document.getElementById('grid');
+        const colorPicker = document.getElementById('colorPicker');
+
+        const socket = io();
+
+        socket.on('initialGrid', (gridState) => {
+            for (let i = 0; i < gridState.length; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.style.backgroundColor = gridState[i];
+                cell.addEventListener('click', () => {
+                    const color = colorPicker.value;
+                    cell.style.backgroundColor = color;
+                    socket.emit('colorChange', { index: i, color: color });
+                });
+                grid.appendChild(cell);
+            }
+        });
+
+        socket.on('updateCell', (data) => {
+            grid.children[data.index].style.backgroundColor = data.color;
+        });
+    </script>
+</body>
+</html>
