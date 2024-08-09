@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(express.static('public'));
+app.use(express.static('pixel'));
 
 const gridSize = 200 * 200;
 const gridFilePath = path.join(__dirname, 'gridState.json');
