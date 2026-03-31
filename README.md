@@ -7,4 +7,4 @@ pixel grid drawing website
 ```npm install```
 
 ### Run:
-```nmp run```
+```nmp start```
